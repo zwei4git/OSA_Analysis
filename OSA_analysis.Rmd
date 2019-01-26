@@ -1,0 +1,64 @@
+---
+title: "OSA"
+author: "Zihan Wei"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidiverse)
+library(pROC)
+library(psych)
+```
+
+Read-in data from excel
+```{r}
+library(readxl)
+osa <- read_excel("path/osa.xlsx")
+head(osa) #display the data head
+```
+
+
+```{r }
+#Descriptive statistics of 4 tests
+summary(osa[4:7])
+```
+#Plot the ROCs
+```{r}
+#Check the plot and AUC value
+roc_stop<-roc(osa$OSA,osa$stop,plot = TRUE)
+roc_stopA<-roc(osa$OSA,osa$stopA,plot = TRUE)
+roc_stopbang<-roc(osa$OSA,osa$stopbang,plot = TRUE)
+roc_stopbangA<-roc(osa$OSA,osa$stopbangA,plot = TRUE)
+```
+
+#Use paired test to see if two AUCs are significantly different alpha=0.05
+```{r}
+roc.test(roc_stop,roc_stopA,paired = TRUE)
+roc.test(roc_stopA,roc_stopbang,paired = TRUE)
+roc.test(roc_stopA,roc_stopbangA,paired = TRUE)
+```
+The results above show that stopbangA works better than stop and stopA, but no significant different than stopbang
+
+#Unpaired test to see if stopbangA works equally well on male and female
+```{r}
+{
+  roc_SA_m<-roc(osa[osa$GENDER==1,]$OSA,osa[osa$GENDER==1,]$stopbangA)
+  roc_SA_f<-roc(osa[osa$GENDER==0,]$OSA,osa[osa$GENDER==0,]$stopbangA)
+  roc.test(roc_SA_f,roc_SA_m)
+}
+```
+The result shows no significant difference between male and female using stopbangA
+
+
+#Find the best cutoff point
+```{r}
+#Find the best cutoff point of stopbangA, and return the values: specificity, sensitivity, etc.,
+coords(roc_stopbangA,'best',best.method="closest.topleft",
+       ret=c("threshold", "specificity", "sensitivity", "accuracy",
+             "tn", "tp", "fn", "fp", "npv", "ppv", "1-specificity",
+             "1-sensitivity", "1-accuracy", "1-npv", "1-ppv",
+             "precision", "recall"))
+```
+
+Want to see if try method and random forest can do a better job (using python)
+
