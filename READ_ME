@@ -4,5 +4,5 @@ Body type has been incorporated into the questionnaire scores to create new meas
 Data are in a file called OSA and also include sex (1 = male 0 = female) and
 race (1 = white, 2 = AA, 3 = Hispanic, 4 = Asian, 5 = other))
 
-I first used R to do plot ROCs and perform some staistical test, and find the cutoff point,
+I first used R to plot ROC curves and performed some staistical tests to find the cutoff point,
 then, in python I fitted the data using a decision tree and a random forest to see the sensitivity and specificity.
